@@ -7,4 +7,5 @@
 4. Terraform
 5. Docker
 6. Kubernetes
+7. Ansible
 

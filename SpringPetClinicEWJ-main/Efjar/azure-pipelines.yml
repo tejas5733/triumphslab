@@ -1,0 +1,30 @@
+---
+pool:
+  name: "Azure Pipelines" 
+  vmImage: 'ubuntu-latest'
+
+trigger:
+  - none
+
+
+steps:
+  - task: Maven@4
+    inputs:
+      mavenPomFile: 'pom.xml'
+      goals: 'package'
+      publishJUnitResults: true
+      testResultsFiles: '**/surefire-reports/TEST-*.xml'
+      jdkVersionOption: '1.17'
+  - task: PublishBuildArtifacts@1
+    inputs:
+      PathtoPublish: '$(Build.ArtifactStagingDirectory)'
+      ArtifactName: 'drop'
+      publishLocation: 'Container'
+  - task: AzureRmWebAppDeployment@4
+    inputs:
+      ConnectionType: 'AzureRM'
+      azureSubscription: 'ADO-Connect'
+      appType: 'webAppLinux'
+      WebAppName: 'SpringPetClinic'
+      packageForLinux: '$(Build.ArtifactStagingDirectory)/**/*.zip'
+
